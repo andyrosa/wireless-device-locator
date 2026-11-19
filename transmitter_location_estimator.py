@@ -80,9 +80,9 @@ def estimate_location(samples, width=10, depth=10, height=3, levels=3):
                              floors.index(sample['floor']) * height,
                              statistics.median(s['rssi'] for s in values)))
     npoints = len(observations)
-    if npoints < 4:
+    if npoints < MIN_ESTIMATE_POSITIONS:
         return {'ready': False, 'points': npoints,
-                'message': f'Record {4 - npoints} more distinct positions. Spread them around the house and across floors.'}
+                'message': f'Distinct positions still needed: {MIN_ESTIMATE_POSITIONS - npoints}. Spread them around the house and across floors.'}
     floor_scores = []
     candidates = []
     # For each possible position, fit RSSI = A - 10*n*log10(distance).
