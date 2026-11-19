@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Wireless Device Locator</title>
+  <link rel="stylesheet" href="/wireless-device-locator.css">
+</head>
+<body>
+<main>
+  <header class="device-controls" aria-label="Device and recording">
+    <div class="source-controls">
+      <label class="checkbox-label"><input id="mode" type="checkbox">Simulation</label>
+      <label id="signal-source-field">Signal source <select id="signal-source" disabled><option value="bluetooth">Bluetooth</option><option value="wifi">Wi-Fi</option></select></label>
+      <label id="live-device-field"><span id="device-label">Device</span> <select id="device-picker" disabled><option value="">Loading devices...</option></select></label>
+      <output id="simulated-source" hidden>Simulated device</output>
+      <div id="simulation-controls" class="control-group" hidden>
+        <label>Rate <input id="sim-hz" type="number" min="0.5" max="50" step="0.5" value="10"> Hz</label>
+        <label>Noise <input id="sim-noise" type="number" min="0" max="20" step="0.5" value="3"> dB</label>
+      </div>
+    </div>
+    <div class="recording-cluster" id="measurement-status">
+      <span class="live-number">Signal <output id="live">--</output> dBm</span>
+      <span id="signal-age">No signal yet</span>
+      <span id="wifi-scan-status" role="status" hidden></span>
+      <span id="wifi-freshness" hidden></span>
+      <span id="real-rate"></span>
+      <span id="run-clock" hidden>Run <time id="recording-timer">00:00</time></span>
+      <button id="pause-recording" type="button" hidden>Pause</button>
+    </div>
+    <span id="status-text" role="status" aria-live="polite" hidden></span>
+  </header>
+  <section class="plan-controls" aria-label="Floor plan">
+    <label>Top of plan <span id="plan-orientation-arrow" aria-hidden="true" hidden>&#8593;</span><input id="plan-top" aria-label="Top of plan" type="text" list="plan-top-options" maxlength="60" placeholder="e.g. Street" autocomplete="off"></label>
+    <datalist id="plan-top-options"><option value="North"></option><option value="Street"></option><option value="Main Door"></option></datalist>
+    <label class="checkbox-label"><input id="metric-units" type="checkbox">Metric</label>
+    <label>Width <input id="house-width" aria-label="Width" type="number" step="any" value="32.81"><output id="sim-width" hidden></output> <span class="plan-unit">ft</span></label>
+    <label>Depth <input id="house-depth" aria-label="Depth" type="number" step="any" value="32.81"><output id="sim-depth" hidden></output> <span class="plan-unit">ft</span></label>
+    <label>Level gap <input id="floor-height" aria-label="Level gap" type="number" step="any" value="10"><output id="sim-height" hidden></output> <span class="plan-unit">ft</span></label>
+    <div class="control-group level-controls">
+      <label>Levels shown <input id="house-levels" type="number" min="1" max="20" step="1" value="3" disabled></label>
+      <label class="checkbox-label"><input id="view-3d" type="checkbox">3D</label>
+      <div id="scene-level-control" class="control-group" hidden>
+        <label>Record on <select id="scene-floor" aria-label="Record on"></select></label>
+        <button id="delete-recording-level" type="button" hidden>Delete level</button>
+      </div>
+    </div>
+    <span id="hidden-levels-info" role="status" hidden></span>
+  </section>
+  <div class="workspace-shell">
+    <section class="workspace" aria-label="Floor signal maps">
+      <div class="map-legend" aria-label="Map symbols">
+        <span><span class="legend-x">X</span> estimated position</span>
+        <span><span class="legend-area" aria-hidden="true"></span> possible area; wider means less certain</span>
+        <span id="simulation-legend" hidden><span class="legend-truth">+</span> known simulated location</span>
+        <span><span class="legend-recording" aria-hidden="true"></span> recording point</span>
+        <span id="map-instructions">Click a position to record; click a point to resume.</span>
+        <span id="scene-instructions" hidden>Drag to rotate; scroll to zoom.</span>
+      </div>
+      <div class="map-stage">
+        <div class="floor-grid"></div>
+        <div id="scene-3d" hidden><canvas id="floor-canvas" aria-label="3D floor plans"></canvas></div>
+      </div>
+    </section>
+    <aside id="samples-dialog" aria-label="Signal readings table">
+      <div class="samples-heading">
+        <span id="readings-heading">Readings</span>
+        <button id="export" type="button" hidden>Export all CSV</button>
+        <button id="reset-data" type="button" hidden>Delete all</button>
+        <button id="toggle-readings" type="button" aria-expanded="true" aria-controls="readings-table">Collapse</button>
+        <label id="readings-view">View <select id="point-picker" aria-label="Readings"><option value="__signal_log__">All readings</option></select></label>
+        <span id="samples-note">Waiting for readings.</span>
+        <button id="remove-point" type="button" hidden>Remove point</button>
+      </div>
+      <div class="sample-list" id="readings-table">
+        <table><thead><tr><th scope="col">#</th><th scope="col" id="signal-point-column">Point</th><th scope="col">Run</th><th scope="col">Elapsed</th><th scope="col">Time</th><th scope="col">dBm</th></tr></thead><tbody id="raw-readings"></tbody></table>
+      </div>
+    </aside>
+  </div>
+</main>
+<script src="/wireless-device-locator.js"></script>
+</body>
+</html>
