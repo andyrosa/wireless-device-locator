@@ -3,6 +3,7 @@ import math
 import statistics
 
 FLOORS = ('0', '1', '2')
+MIN_ESTIMATE_POSITIONS = 2
 
 
 def polygon_hull(points):
@@ -58,9 +59,9 @@ def estimate_simulation(samples, width=10, depth=10, height=3, noise=3, levels=3
     plausible = [c for c in candidates if c['score'] <= best['score']+7.8]
     regions = regions_for(plausible)
     distinct = len({(p['floor'], round(p['x']*20), round(p['y']*20)) for p in points})
-    return dict(best, ready=distinct >= 3, points=distinct, regions=regions,
+    return dict(best, ready=distinct >= MIN_ESTIMATE_POSITIONS, points=distinct, regions=regions,
                 alternative_floors=[r['floor'] for r in regions if r['floor'] != best['floor']],
-                quality='Early estimate' if distinct < 3 else 'Simulation estimate',
+                quality='Early estimate' if distinct < MIN_ESTIMATE_POSITIONS else 'Simulation estimate',
                 message='Click another position to narrow the polygon.')
 
 
